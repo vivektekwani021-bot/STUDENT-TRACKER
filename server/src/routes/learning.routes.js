@@ -28,7 +28,7 @@ const { getLearningContent } = require("../controllers/learning.controller");
 router.post(
   "/content",
   protect,           // ✅ Ye middleware req.user._id provide karega
-  onboardingRequired, 
+//   onboardingRequired, 
   getLearningContent
 );
 

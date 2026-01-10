@@ -18,6 +18,8 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/learning", learningRoutes);
 app.use("/api/quiz", require("./routes/quiz.routes"));
 app.use("/api/pdf", require("./routes/pdf.routes"));
+app.use("/api/roadmap", require("./routes/roadmap.routes"));
+
 
 
 

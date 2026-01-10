@@ -11,11 +11,11 @@ const sameDate = (d1, d2) =>
 // ================= SCHOOL =================
 exports.markSchoolAttendance = async (req, res) => {
   try {
-    const {isPresent,date}=req.body;
-    let userattend=await Attendance.findOne({user: req.user._id});
-     const targetDate = new Date(date);
-    if(!userattend){
-       userattend = await Attendance.create({
+    const { isPresent, date } = req.body;
+    let userattend = await Attendance.findOne({ user: req.user._id });
+    const targetDate = new Date(date);
+    if (!userattend) {
+      userattend = await Attendance.create({
         user: req.user._id,
         totalClasses: 0,
         attendedClasses: 0,
@@ -51,9 +51,9 @@ exports.markSchoolAttendance = async (req, res) => {
         userattend.streak += 1;
       }
     }
-    else{
+    else {
 
-     userattend.totalClasses += 1;
+      userattend.totalClasses += 1;
 
       if (isPresent) {
         userattend.presentDates.push(targetDate);
@@ -64,7 +64,7 @@ exports.markSchoolAttendance = async (req, res) => {
         userattend.streak = 0;
       }
     }
- await userattend.save();
+    await userattend.save();
 
     res.status(200).json({
       message: "Attendance updated successfully",
@@ -169,6 +169,46 @@ exports.markSubjectAttendance = async (req, res) => {
       status: calculateStatus(percentage),
       streak: subject.streak
     });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET Attendance (Unified for both types)
+exports.getAttendance = async (req, res) => {
+  try {
+    const { educationLevel } = req.user;
+
+    // For now we return the raw document, frontend can parse what it needs
+    const attendance = await Attendance.findOne({ user: req.user._id });
+
+    if (!attendance) {
+      return res.status(200).json({
+        found: false,
+        streak: 0,
+        history: []
+      });
+    }
+
+    if (educationLevel === 'school') {
+      return res.status(200).json({
+        found: true,
+        type: 'school',
+        streak: attendance.streak,
+        presentDates: attendance.presentDates,
+        absentDates: attendance.absentDates,
+        totalClasses: attendance.totalClasses,
+        attendedClasses: attendance.attendedClasses
+      });
+    } else {
+      // College - return all subjects
+      return res.status(200).json({
+        found: true,
+        type: 'college',
+        subjects: attendance.subjects
+      });
+    }
 
   } catch (error) {
     res.status(500).json({ message: error.message });

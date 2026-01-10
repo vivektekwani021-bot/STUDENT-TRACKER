@@ -52,7 +52,11 @@ Explain in simple language:
     return response.data.choices[0].message.content;
 
   } catch (error) {
-    console.error("EXPLAIN WRONG ANSWER ERROR 👉", error.response?.data);
+    console.error("EXPLAIN WRONG ANSWER ERROR DETAILS:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
     throw new Error("Failed to explain wrong answer");
   }
 };

@@ -3,7 +3,8 @@ const router = express.Router();
 
 const {
   markSchoolAttendance,
-  markSubjectAttendance
+  markSubjectAttendance,
+  getAttendance
 } = require("../controllers/attendance.controller");
 
 const { protect } = require("../middleware/auth.middleware");
@@ -26,5 +27,8 @@ router.post(
   protect,
   markSubjectAttendance
 );
+
+// SHARED GET
+router.get("/", protect, getAttendance);
 
 module.exports = router;

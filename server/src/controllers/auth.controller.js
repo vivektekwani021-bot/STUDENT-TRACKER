@@ -2,18 +2,11 @@ const User = require("../models/User.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Generate JWT
-// const generateToken = (id) => {
-//   return jwt.sign(const token = jwt.sign(
-//   { _id: user._id },
-//   process.env.JWT_SECRET,
-//   { expiresIn: "7d" }
-// );
-// )
-// };
+// ... existing code ...
+
 const generateToken = (id) => {
   return jwt.sign(
-    { id },                    // ✅ ALWAYS use `id`
+    { id },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -42,7 +35,7 @@ exports.register = async (req, res) => {
     });
 
     const token = generateToken(user._id);
-    user.token=token;
+    user.token = token;
     await user.save();
     res.status(201).json({
       success: true,
@@ -53,7 +46,8 @@ exports.register = async (req, res) => {
         email: user.email,
         educationLevel: user.educationLevel,
         course: user.course,
-        isPlacementEnabled: user.isPlacementEnabled
+        isPlacementEnabled: user.isPlacementEnabled,
+        // Include minimal profile data if needed immediately
       }
     });
   } catch (error) {
@@ -77,7 +71,7 @@ exports.login = async (req, res) => {
     }
 
     const token = generateToken(user._id);
-    user.token=token;
+    user.token = token;
     await user.save();
     res.status(200).json({
       success: true,
@@ -90,6 +84,20 @@ exports.login = async (req, res) => {
         course: user.course,
         isPlacementEnabled: user.isPlacementEnabled
       }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET CURRENT USER PROFILE
+exports.getMe = async (req, res) => {
+  try {
+    // req.user is set by protect middleware
+    const user = await User.findById(req.user._id);
+    res.status(200).json({
+      success: true,
+      user
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -9,7 +9,7 @@ const {
   submitQuiz
 } = require("../controllers/quiz.controller");
 
-router.post("/generate", protect, onboardingRequired, generateQuiz);
-router.post("/submit", protect, onboardingRequired, submitQuiz);
+router.post("/generate", protect, generateQuiz);
+router.post("/submit", protect, submitQuiz);
 
 module.exports = router;

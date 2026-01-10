@@ -43,20 +43,21 @@ exports.generateQuizQuestions = async (topic) => {
           {
             role: "user",
             content: `
-Generate EXACTLY 12 MCQ questions on topic "${topic}".
+Generate EXACTLY 10 MCQ questions on topic "${topic}".
 
 Rules:
-- 4 Easy, 4 Medium, 4 Hard
+- 3 Easy, 3 Medium, 4 Hard
 - Each question must have 4 options
-- Mention correctAnswer explicitly
-- Do NOT add explanations
+- "correctAnswer" must be the 0-based INDEX of the correct option (0, 1, 2, or 3)
+- Include a short "explanation" for why the answer is correct
 - Return STRICT JSON ONLY in this format:
 
 [
   {
     "question": "",
     "options": ["", "", "", ""],
-    "correctAnswer": "",
+    "correctAnswer": 0,
+    "explanation": "",
     "difficulty": "Easy"
   }
 ]
@@ -64,7 +65,8 @@ Rules:
           }
         ],
         temperature: 0.3,
-        max_tokens: 1200
+        temperature: 0.3,
+        max_tokens: 4000
       },
       {
         headers: {
@@ -74,11 +76,17 @@ Rules:
       }
     );
 
-    return JSON.parse(response.data.choices[0].message.content);
+    const content = response.data.choices[0].message.content;
+    const cleanContent = content.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    return JSON.parse(cleanContent);
 
   } catch (error) {
-    console.error("QUIZ GEN ERROR 👉", error.response?.data);
+    console.error("QUIZ GEN ERROR DETAILS:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
     throw new Error("Failed to generate quiz");
   }
 };
-

@@ -8,7 +8,6 @@ const { onboardingRequired } = require("../middleware/onboarding.middleware");
 router.post(
   "/notes",
   protect,
-  onboardingRequired,
   downloadNotesPDF
 );
 

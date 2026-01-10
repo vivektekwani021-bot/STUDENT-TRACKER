@@ -21,14 +21,14 @@ const { getLearningContent } = require("../controllers/learning.controller");
 //   protect,
 //   onboardingRequired,
 //   markTopicLearned,
-  
+
 // );
 // 🔓 PUBLIC — AI learning content
 // 🔐 PROTECTED — AI learning content
 router.post(
   "/content",
   protect,           // ✅ Ye middleware req.user._id provide karega
-//   onboardingRequired, 
+  //   onboardingRequired, 
   getLearningContent
 );
 
@@ -36,7 +36,6 @@ router.post(
 router.post(
   "/complete",
   protect,
-  onboardingRequired,
   markTopicLearned,
   getLearningContent
 );
